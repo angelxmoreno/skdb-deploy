@@ -20,6 +20,14 @@ echo "🔄 Restarting containers..."
 docker-compose down
 docker-compose up -d --build || { echo "❌ Failed to start containers!"; exit 1; }
 
+# ✅ Wait for PHP-FPM to be ready before restarting Nginx
+echo "⏳ Waiting for PHP-FPM to be ready..."
+sleep 5  # Small delay
+
+# Restart Nginx separately to ensure it can connect to PHP-FPM
+echo "♻️ Restarting Nginx..."
+docker-compose restart nginx || { echo "❌ Failed to restart Nginx!"; exit 1; }
+
 # Cleanup old Docker images
 echo "🧹 Cleaning up unused Docker images..."
 docker image prune -f

@@ -27,15 +27,7 @@ services:
     restart: unless-stopped
     volumes:
       - skdb_app_data:/var/www/html
-    environment:
-      - SECURITY_SALT=${SECURITY_SALT}
-      - DEBUG=${DEBUG}
-      - CACHE_REDIS_URL=${CACHE_REDIS_URL}
-      - CACHE_DEFAULT_URL=${CACHE_DEFAULT_URL}
-      - CACHE_CAKECORE_URL=${CACHE_CAKECORE_URL}
-      - CACHE_CAKEMODEL_URL=${CACHE_CAKEMODEL_URL}
-      - CACHE_CAKEROUTES_URL=${CACHE_CAKEROUTES_URL}
-      - DATABASE_URL=${DATABASE_URL}
+      - .env:/var/www/html/.env  # ✅ Mounts .env file into the container
     depends_on:
       - redis
       - db
