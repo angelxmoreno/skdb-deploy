@@ -102,6 +102,18 @@ Add this line to update every night at 2 AM:
 ---
 
 ## 🛠 Troubleshooting
+### **Checking Logs**
+If you encounter issues, check the logs for more details:
+```sh
+docker logs skdb_php  # Check application logs
+```
+```sh
+docker logs skdb_db   # Check database logs
+```
+```sh
+docker logs skdb_nginx  # Check web server logs
+```
+
 ### **Permission Issues with Docker**
 If you see `permission denied while trying to connect to the Docker daemon`:
 ```sh

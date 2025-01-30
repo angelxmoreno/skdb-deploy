@@ -54,6 +54,8 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - skdb_db_data:/var/lib/mysql
+    ports:
+      - "8336:3306"
     networks:
       - skdb_network
 
