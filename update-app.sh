@@ -22,13 +22,25 @@ echo "🔑 Configuring Git credentials inside the container..."
 docker exec skdb_php git config --global credential.helper store
 docker exec skdb_php sh -c "echo 'https://${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN}@github.com' > ~/.git-credentials"
 
+# ✅ Fix: Mark the repo directory as safe
+echo "🛠 Marking /var/www/html as a safe directory..."
+docker exec skdb_php git config --global --add safe.directory /var/www/html
+
 # Pull the latest code inside the container
 echo "🔄 Pulling latest changes inside the container..."
 docker exec skdb_php git -C /var/www/html pull origin main || { echo "❌ Git pull failed!"; exit 1; }
 
-# Install dependencies inside the container
-echo "📦 Installing PHP dependencies..."
-docker exec skdb_php composer install --no-dev --optimize-autoloader || { echo "❌ Composer install failed!"; exit 1; }
+# Install dependencies inside the container (WITH DEV DEPENDENCIES)
+echo "📦 Installing PHP dependencies (including dev)..."
+docker exec skdb_php composer install --optimize-autoloader || { echo "❌ Composer install failed!"; exit 1; }
+
+# Run database migrations
+echo "🔄 Running database migrations..."
+docker exec skdb_php bin/cake migrations migrate || { echo "❌ Migrations failed!"; exit 1; }
+
+# Run all database seeds
+echo "🌱 Seeding database..."
+docker exec skdb_php bin/cake migrations seed || { echo "❌ Seeding failed!"; exit 1; }
 
 # Restart PHP container to apply changes
 echo "♻️ Restarting PHP container..."
