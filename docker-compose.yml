@@ -1,15 +1,15 @@
 version: "3.8"
 
 services:
-  nginx:
+  nginx_app:
     image: nginx:alpine
-    container_name: skdb_nginx
+    container_name: skdb_nginx_app
     restart: unless-stopped
     ports:
       - "8080:80"
     volumes:
       - skdb_app_data:/var/www/html
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/app.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - php
     networks:
@@ -27,7 +27,7 @@ services:
     restart: unless-stopped
     volumes:
       - skdb_app_data:/var/www/html
-      - .env:/var/www/html/.env  # ✅ Mounts .env file into the container
+      - .env:/var/www/html/.env
     depends_on:
       - redis
       - db
@@ -59,8 +59,39 @@ services:
     networks:
       - skdb_network
 
+  fe_builder:
+    build:
+      context: .
+      dockerfile: fe/Dockerfile
+      args:
+        GITHUB_USERNAME: ${GITHUB_USERNAME}
+        GITHUB_ACCESS_TOKEN: ${GITHUB_ACCESS_TOKEN}
+        GITHUB_FE_REPO: ${GITHUB_FE_REPO}
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    container_name: skdb_fe_builder
+    restart: "no"
+    volumes:
+      - skdb_fe_data:/app
+    networks:
+      - skdb_network
+
+  nginx_fe:
+    image: nginx:alpine
+    container_name: skdb_nginx_fe
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    volumes:
+      # Mount the FE built assets (from fe_builder) into the Nginx document root.
+      - skdb_fe_data:/var/www/html
+      - ./nginx/fe.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - skdb_network
+
 volumes:
   skdb_app_data:
+  skdb_fe_data:
   skdb_db_data:
 
 networks:

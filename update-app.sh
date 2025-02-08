@@ -36,7 +36,7 @@ docker exec skdb_php composer install --optimize-autoloader || { echo "❌ Compo
 
 # Run database migrations
 echo "🔄 Running database migrations..."
-docker exec skdb_php bin/cake migrations migrate || { echo "❌ Migrations failed!"; exit 1; }
+docker exec skdb_php bin/cake run_migrations || { echo "❌ Migrations failed!"; exit 1; }
 
 # Run all database seeds
 echo "🌱 Seeding database..."

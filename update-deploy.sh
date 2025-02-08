@@ -26,7 +26,8 @@ sleep 5  # Small delay
 
 # Restart Nginx separately to ensure it can connect to PHP-FPM
 echo "♻️ Restarting Nginx..."
-docker-compose restart nginx || { echo "❌ Failed to restart Nginx!"; exit 1; }
+docker-compose restart nginx_app || { echo "❌ Failed to restart Nginx APP!"; exit 1; }
+docker-compose restart nginx_fe || { echo "❌ Failed to restart Nginx FE!"; exit 1; }
 
 # Cleanup old Docker images
 echo "🧹 Cleaning up unused Docker images..."

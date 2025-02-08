@@ -8,7 +8,7 @@ do
 done
 
 echo "✅ Database is ready! Running migrations..."
-bin/cake migrations migrate
+bin/cake run_migrations
 
 echo "🌱 Running database seeds..."
 bin/cake migrations seed
