@@ -1,6 +1,7 @@
-# Stage 1: Build the React app using Bun
-FROM imbios/bun-node:1.1.18-18.20.2-alpine-git AS builder
+# Use the Bun-based image that includes git
+FROM imbios/bun-node:1.1.18-18.20.2-alpine-git
 
+# Set the working directory for building the FE
 WORKDIR /src
 
 # Accept build arguments for authentication and repository details.
@@ -15,10 +16,10 @@ RUN git clone https://${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN}@github.com/${GIT
 RUN bun install
 RUN bun run build
 
-# Stage 2: Copy only the built assets to the /app directory.
-FROM alpine:latest AS copier
-WORKDIR /app
-COPY --from=builder /src/dist/ .
+# Copy the built assets from /src/dist to /public.
+# The /public directory will be mounted to a Docker volume (skdb_fe_data) so that
+# the final nginx container can serve these files.
+RUN mkdir -p /public && cp -r /src/dist/* /public/
 
-# Note: This stage exists solely to provide the built assets in /app,
-# which will be output to the shared volume skdb_fe_data when used as a build context.
+# Keep the container running so that you can exec into it for updates.
+CMD ["tail", "-f", "/dev/null"]
