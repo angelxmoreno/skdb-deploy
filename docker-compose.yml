@@ -67,9 +67,9 @@ services:
         GITHUB_USERNAME: ${GITHUB_USERNAME}
         GITHUB_ACCESS_TOKEN: ${GITHUB_ACCESS_TOKEN}
         GITHUB_FE_REPO: ${GITHUB_FE_REPO}
-    environment:
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
     container_name: skdb_fe_builder
+    environment:
+      VITE_API_BASE_URL: "https://${BE_APP_PUBLIC_DOMAIN}"
     restart: unless-stopped
     # Mount the persistent volume to /public where the built assets live.
     volumes:
